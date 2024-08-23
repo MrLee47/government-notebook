@@ -41,15 +41,21 @@ function openPage(index) {
     };
 }
 
-function renderPageList() {
+function searchPages() {
+    const query = document.getElementById('search-bar').value.toLowerCase();
+    const filteredPages = pages.filter(page => page.name.toLowerCase().includes(query));
+    renderPageList(filteredPages);
+}
+
+function renderPageList(filteredPages = pages) {
     const pageList = document.getElementById('page-list');
     pageList.innerHTML = '';
 
-    pages.forEach((page, index) => {
+    filteredPages.forEach((page, index) => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `
             <div class="page-title">${page.name}</div>
-            <div class="menu">
+            <div class="menu" onclick="toggleMenu(event)">
                 <span>...</span>
                 <div class="dropdown">
                     <button onclick="duplicatePage(${index})">Duplicate</button>
@@ -61,3 +67,18 @@ function renderPageList() {
         pageList.appendChild(listItem);
     });
 }
+
+function toggleMenu(event) {
+    event.stopPropagation();
+    const menu = event.currentTarget;
+    const isActive = menu.classList.contains('active');
+    document.querySelectorAll('.menu').forEach(m => m.classList.remove('active'));
+    if (!isActive) {
+        menu.classList.add('active');
+    }
+}
+
+// Hide all menus when clicking outside
+document.addEventListener('click', () => {
+    document.querySelectorAll('.menu').forEach(m => m.classList.remove('active'));
+});
